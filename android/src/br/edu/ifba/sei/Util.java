@@ -11,7 +11,7 @@ public class Util {
     public static void scheduleJob(Context context) {
         ComponentName serviceComponent = new ComponentName(context, SEICheckerJobService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
-        builder.setPeriodic(10 * 1000);
+        builder.setPeriodic(15 * 60 * 1000L); // 15 minutes (minimum value)
         //builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
         //builder.setRequiresDeviceIdle(true); // device should be idle
         //builder.setRequiresCharging(false); // we don't care if the device is charging or not
