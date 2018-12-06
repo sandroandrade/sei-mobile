@@ -14,7 +14,6 @@ public class SEICheckerJobService extends JobService {
         Intent intent = new Intent(this, org.qtproject.qt5.android.bindings.QtActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        Util.scheduleJob(getApplicationContext()); // reschedule the job
         return true;
     }
 
