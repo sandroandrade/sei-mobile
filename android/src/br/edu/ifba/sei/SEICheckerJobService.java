@@ -66,6 +66,8 @@ public class SEICheckerJobService extends JobService {
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(createID(), mBuilder.build());
 
+        Util.scheduleJob(getApplicationContext()); // reschedule the job
+
         return true;
     }
 
