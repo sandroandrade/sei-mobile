@@ -14,12 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-class MyJavaNatives
-{
-    // declare the native method
-    public static native void sendFibonaciResult(int n);
-}
-
 public class SEICheckerJobService extends JobService {
 
     public static final String EXTRA_MESSAGE = "br.edu.ifba.sei.MESSAGE";
@@ -49,15 +43,15 @@ public class SEICheckerJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Log.i("SEI-Mobile", "onStartJob");
+        Log.i("SEI-Mobile", "Iniciando serviço");
 
         createNotificationChannel();
 
         Intent intent = new Intent(this, org.qtproject.qt5.android.bindings.QtActivity.class);
         intent.putExtra(EXTRA_MESSAGE, "Message from scheduled job!");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-//        startActivity(intent);
+        //startActivity(intent);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.notification_icon)
@@ -72,14 +66,11 @@ public class SEICheckerJobService extends JobService {
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(createID(), mBuilder.build());
 
-        Util.scheduleJob(getApplicationContext()); // reschedule the job
-        MyJavaNatives.sendFibonaciResult(123);
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.i("SEI-Mobile", "onStopJob");
         return true;
     }
 }
