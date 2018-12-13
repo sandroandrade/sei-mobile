@@ -14,16 +14,6 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.MediaType;
 
 public class SEICheckerJobService extends JobService {
 
@@ -62,7 +52,6 @@ public class SEICheckerJobService extends JobService {
         intent.putExtra(EXTRA_MESSAGE, "Message from scheduled job!");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        //startActivity(intent);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.notification_icon)
@@ -79,53 +68,7 @@ public class SEICheckerJobService extends JobService {
 
         Util.scheduleJob(getApplicationContext()); // reschedule the job
 
-        Thread thread = new Thread(new Runnable(){
-            private OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
-                .build();
-            private String get(String url) throws IOException {
-                Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                  return response.body().string();
-                }
-            }
-            private String post(String url, String params) throws IOException {
-                RequestBody body = RequestBody.create(MediaType.get("application/x-www-form-urlencoded"), params);
-                Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
-                try (Response response = client.newCall(request).execute()) {
-                    return response.body().string();
-                }
-            }
-            @Override
-            public void run() {
-                try {
-                    String response = get("https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA&sigla_sistema=SEI");
-                    Pattern r = Pattern.compile("name=\"hdnCaptcha\".*value=\"(.*)\"");
-                    Matcher m = r.matcher(response);
-                    String hdnCaptcha;
-                    if(m.find())
-                        hdnCaptcha = m.group(1);
-//                    String response = post("https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI",
-//                                           "hdnCaptcha=" + internal.hdnCaptcha + "&hdnIdSistema=100000100&hdnMenuSistema=&hdnModuloSistema=&hdnSiglaOrgaoSistema=IFBA&hdnSiglaSistema=SEI&pwdSenha=iFba_4$s&sbmLogin=Acessar&selOrgao=0&txtUsuario=sandroandrade");
-
-//                    int maxLogSize = 2000;
-//                    for(int i = 0; i <= response.length() / maxLogSize; i++) {
-//                        int start = i * maxLogSize;
-//                        int end = (i+1) * maxLogSize;
-//                        end = end > response.length() ? response.length() : end;
-//                        Log.i("SEI-mobile", response.substring(start, end));
-//                    }
-
-                } catch (IOException e) {}
-            }
-        });
+        Thread thread = new Thread(new SEICheckerThread());
         thread.start();
 
         return true;

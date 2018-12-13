@@ -38,7 +38,8 @@ DISTFILES += \
     android/gradlew.bat \
     android/src/br/edu/ifba/sei/StartSEICheckerReceiver.java \
     android/src/br/edu/ifba/sei/Util.java \
-    android/src/br/edu/ifba/sei/SEICheckerJobService.java
+    android/src/br/edu/ifba/sei/SEICheckerJobService.java \
+    android/src/br/edu/ifba/sei/SEICheckerThread.java
 
 contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
     ANDROID_PACKAGE_SOURCE_DIR = \

@@ -56,6 +56,7 @@ ApplicationWindow {
         visible: !busyIndicator.running
         initialItem: LoginPage {}
     }
+
     Component.onCompleted: {
         NAM.httpRequest.onreadystatechange=function() {
             if (NAM.httpRequest.readyState === XMLHttpRequest.DONE &&
