@@ -5,7 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.content.Intent;
 
-public class StartSEICheckerReceiver extends BroadcastReceiver {
+public class SEICheckerReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

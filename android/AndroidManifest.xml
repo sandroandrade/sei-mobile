@@ -65,7 +65,7 @@
         <service android:name="SEICheckerJobService" android:label="SEI checker service" android:permission="android.permission.BIND_JOB_SERVICE">
         </service>
 
-        <receiver android:name="StartSEICheckerReceiver">
+        <receiver android:name="SEICheckerReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

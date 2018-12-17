@@ -56,17 +56,4 @@ ApplicationWindow {
         visible: !busyIndicator.running
         initialItem: LoginPage {}
     }
-
-    Component.onCompleted: {
-        NAM.httpRequest.onreadystatechange=function() {
-            if (NAM.httpRequest.readyState === XMLHttpRequest.DONE &&
-                    NAM.httpRequest.status === 200) {
-                var re = /name="hdnCaptcha".*value="(.*)"/
-                internal.hdnCaptcha = re.exec(NAM.httpRequest.responseText)[1]
-                busyIndicator.running = false
-            }
-        }
-        NAM.get('https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA&sigla_sistema=SEI')
-        busyIndicator.running = true
-    }
 }

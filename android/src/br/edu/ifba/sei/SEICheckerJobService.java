@@ -10,6 +10,8 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
+import android.content.SharedPreferences;
+import android.content.Context;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,8 +19,9 @@ import java.util.Locale;
 
 public class SEICheckerJobService extends JobService {
 
-    public static final String EXTRA_MESSAGE = "br.edu.ifba.sei.MESSAGE";
-    public static final String CHANNEL_ID = "br.edu.ifba.sei.MYCHANNEL";
+    private static final String EXTRA_MESSAGE = "br.edu.ifba.sei.MESSAGE";
+    private static final String CHANNEL_ID = "br.edu.ifba.sei.MYCHANNEL";
+    public static final String PREFERENCE_ID = "br.edu.ifba.sei.PREFERENCE_FILE_KEY";
 
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
@@ -46,6 +49,14 @@ public class SEICheckerJobService extends JobService {
     public boolean onStartJob(JobParameters params) {
         Log.i("SEI-Mobile", "Iniciando serviço");
 
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCE_ID, Context.MODE_PRIVATE);
+        String login = sharedPreferences.getString("sei-mobile-login", null);
+        String password = sharedPreferences.getString("sei-mobile-password", null);
+        if (login == null || password == null)
+            Log.i("SEI-mobile", "Service not configured!");
+        else
+            Log.i("SEI-mobile", "Service CONFIGURED! sei-mobile-login: " + login);
+
         createNotificationChannel();
 
         Intent intent = new Intent(this, org.qtproject.qt5.android.bindings.QtActivity.class);
@@ -68,7 +79,7 @@ public class SEICheckerJobService extends JobService {
 
         Util.scheduleJob(getApplicationContext()); // reschedule the job
 
-        Thread thread = new Thread(new SEICheckerThread());
+        Thread thread = new Thread(new SEICheckerThread(login, password));
         thread.start();
 
         return true;
@@ -78,5 +89,4 @@ public class SEICheckerJobService extends JobService {
     public boolean onStopJob(JobParameters params) {
         return true;
     }
-
 }

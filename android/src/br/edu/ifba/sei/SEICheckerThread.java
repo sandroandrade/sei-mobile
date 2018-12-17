@@ -33,6 +33,9 @@ class SEICheckerThread implements Runnable
         .cookieJar(new MyCookieJar())
         .build();
 
+    private String login = null;
+    private String password = null;
+
     private class MyCookieJar implements CookieJar {
         private List<Cookie> cookies;
 
@@ -46,7 +49,6 @@ class SEICheckerThread implements Runnable
             if (cookies != null)
                 return cookies;
             return new ArrayList<Cookie>();
-
         }
     }
 
@@ -82,11 +84,11 @@ class SEICheckerThread implements Runnable
                 .add("hdnMenuSistema", "")
                 .add("hdnModuloSistema", "")
                 .add("hdnSiglaOrgaoSistema", "IFBA")
-                .add("pwdSenha", "<password>")
+                .add("pwdSenha", password)
                 .add("hdnSiglaSistema", "SEI")
                 .add("sbmLogin", "Acessar")
                 .add("selOrgao", "0")
-                .add("txtUsuario", "<username>")
+                .add("txtUsuario", login)
                 .build();
         Log.i("SEI-mobile", "Request body: " + bodyToString(requestBody));
 
@@ -100,6 +102,11 @@ class SEICheckerThread implements Runnable
             Log.i("SEI-mobile", "Return code: " + response.code());
             return response.body().string();
         }
+    }
+
+    public SEICheckerThread(String login, String password) {
+        this.login = login;
+        this.password = password;
     }
 
     @Override
