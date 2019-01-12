@@ -1,46 +1,28 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
+import Qt.labs.settings 1.0
 
 import "networkaccessmanager.js" as NAM
 
 Page {
-    title: qsTr("SEI Mobile - Login")
+    title: qsTr("Login")
+
+    property Settings serverSettings
+
     ColumnLayout {
         id: columnLayout
-        enabled: false
         anchors.centerIn: parent
+
         TextField { id: txtUser; placeholderText: "login" }
+
         TextField { id: txtPassword; placeholderText: "password"; echoMode: TextInput.Password }
+
         Button {
             id: loginButton
             Layout.preferredWidth: parent.width
             text: "login"
-            onClicked: {
-                NAM.httpRequest.onreadystatechange=function() {
-                    if (NAM.httpRequest.readyState === XMLHttpRequest.DONE && NAM.httpRequest.status != 0) {
-                        NAM.reset()
-                        var re = /<title>:: SEI - Controle de Processos ::<\/title>/
-                        if (re.test(NAM.httpRequest.responseText)) {
-                            var processedResponseText = NAM.httpRequest.responseText.replace(/&nbsp;/g, '').replace(/<!DOCTYPE.*>/g, '').replace(/<meta.*>/g, '').replace(/&/g, '&amp;');
-                            stackView.push("qrc:/MainPage.qml",
-                                           {currentUser: txtUser.text,
-                                            unitiesModelXml: processedResponseText,
-                                            receivedModelXml: processedResponseText,
-                                            generatedModelXml: processedResponseText
-                                           })
-                            if (Qt.platform.os == "android") {
-                                configurator.username = txtUser.text
-                                configurator.password = txtPassword.text
-                            }
-                        } else {
-                            errorText.text = "acesso negado"
-                        }
-                    }
-                }
-                NAM.post('https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI',
-                         'hdnCaptcha=' + internal.hdnCaptcha + '&hdnIdSistema=100000100&hdnMenuSistema=&hdnModuloSistema=&hdnSiglaOrgaoSistema=IFBA&hdnSiglaSistema=SEI&pwdSenha=' + txtPassword.text + '&sbmLogin=Acessar&selOrgao=0&txtUsuario=' + txtUser.text)
-            }
+            onClicked: login()
             Text {
                 id: errorText
                 color: "#607D8B"
@@ -49,21 +31,53 @@ Page {
             }
         }
     }
+
+    Settings {
+        id: userSettings
+        property alias user: txtUser.text
+        property alias password: txtPassword.text
+    }
+
     Component.onCompleted: {
+        if (userSettings.user !== "" && userSettings.password !== "") {
+            txtUser.text = userSettings.user
+            txtPassword.text = userSettings.password
+            login()
+        }
+    }
+
+    function login() {
         NAM.busyIndicator = busyIndicator
         NAM.errorText = errorText
         NAM.httpRequest.onreadystatechange=function() {
             if (NAM.httpRequest.readyState === XMLHttpRequest.DONE && NAM.httpRequest.status != 0) {
                 NAM.reset()
-                var re = /name="hdnCaptcha".*value="(.*)"/
+                var re = /<title>:: SEI - Controle de Processos ::<\/title>/
                 if (re.test(NAM.httpRequest.responseText)) {
-                    internal.hdnCaptcha = re.exec(NAM.httpRequest.responseText)[1]
-                    columnLayout.enabled = true
+                    var processedResponseText = NAM.httpRequest.responseText.replace(/&nbsp;/g, '').replace(/<!DOCTYPE.*>/g, '').replace(/<meta.*>/g, '').replace(/&/g, '&amp;');
+                    stackView.push("qrc:/MainPage.qml",
+                                   {currentUser: txtUser.text,
+                                    unitiesModelXml: processedResponseText,
+                                    receivedModelXml: processedResponseText,
+                                    generatedModelXml: processedResponseText,
+                                    userSettings: userSettings
+                                   })
+                    if (Qt.platform.os == "android") {
+                        configurator.username = txtUser.text
+                        configurator.password = txtPassword.text
+                    }
                 } else {
-                    errorText.text = "erro ao obter captcha"
+                    errorText.text = "acesso negado"
                 }
             }
         }
-        NAM.get('https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA&sigla_sistema=SEI')
+        NAM.post('https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI',
+                 'hdnCaptcha=' + internal.hdnCaptcha + '&hdnIdSistema=100000100&hdnMenuSistema=&hdnModuloSistema=&hdnSiglaOrgaoSistema=IFBA&hdnSiglaSistema=SEI&pwdSenha=' + txtPassword.text + '&sbmLogin=Acessar&selOrgao=0&txtUsuario=' + txtUser.text)
+    }
+
+    StackView.onRemoved: {
+        serverSettings.serverURL = ""
+        serverSettings.siglaOrgaoSistema = ""
+        serverSettings.siglaSistema = "SEI"
     }
 }

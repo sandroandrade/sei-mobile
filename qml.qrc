@@ -5,5 +5,7 @@
         <file>networkaccessmanager.js</file>
         <file>LoginPage.qml</file>
         <file>MainPage.qml</file>
+        <file>ServerConfigPage.qml</file>
+        <file>SEITextField.qml</file>
     </qresource>
 </RCC>
