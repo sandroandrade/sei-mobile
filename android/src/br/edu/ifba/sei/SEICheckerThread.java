@@ -29,7 +29,7 @@ class SEICheckerThread implements Runnable
     private OkHttpClient client = new OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
-        .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+//        .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         .cookieJar(new MyCookieJar())
         .build();
 
@@ -90,7 +90,6 @@ class SEICheckerThread implements Runnable
                 .add("selOrgao", "0")
                 .add("txtUsuario", login)
                 .build();
-        Log.i("SEI-mobile", "Request body: " + bodyToString(requestBody));
 
         Request request = new Request.Builder()
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -134,7 +133,6 @@ class SEICheckerThread implements Runnable
                 if(m.find())
                     Log.i("SEI-mobile", "Title: " + m.group(1));
             }
-
         } catch (IOException e) {}
     }
 }

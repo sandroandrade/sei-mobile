@@ -1,8 +1,11 @@
-import QtQuick 2.11
-import QtQuick.Controls 2.4
-import QtQuick.Layouts 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls.Material 2.12
 
 import "networkaccessmanager.js" as NAM
+
+import "FontAwesome"
 
 ApplicationWindow {
     id: window
@@ -17,12 +20,13 @@ ApplicationWindow {
     }
 
     header: ToolBar {
+        Material.foreground: "white"
         contentHeight: toolButton.implicitHeight
 
         ToolButton {
             id: toolButton
-            text: stackView.depth > 1 ? "\u25C0" : "\u2630"
-            font.pixelSize: Qt.application.font.pixelSize * 1.6
+            font.family: FontAwesome.regular
+            text: Icons.faAddressCard
             onClicked: {
                 if (stackView.depth > 1)
                     stackView.pop()

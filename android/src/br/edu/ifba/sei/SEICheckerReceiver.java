@@ -9,7 +9,7 @@ public class SEICheckerReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i("SEI-Mobile", "Escalonando job");
+        Log.i("SEI-Mobile", "Scheduling job");
         Util.scheduleJob(context);
     }
 }

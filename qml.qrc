@@ -1,11 +1,20 @@
 <RCC>
     <qresource prefix="/">
+        <file>FontAwesome/FontAwesome-5-Brands-Regular-400.otf</file>
+        <file>FontAwesome/FontAwesome-5-Free-Regular-400.otf</file>
+        <file>FontAwesome/FontAwesome-5-Free-Solid-900.otf</file>
+        <file>FontAwesome/FontAwesome.qml</file>
+        <file>FontAwesome/Icons.qml</file>
+        <file>FontAwesome/qmldir</file>
+
         <file>main.qml</file>
-        <file>qtquickcontrols2.conf</file>
-        <file>networkaccessmanager.js</file>
         <file>LoginPage.qml</file>
         <file>MainPage.qml</file>
         <file>ServerConfigPage.qml</file>
         <file>SEITextField.qml</file>
+
+        <file>networkaccessmanager.js</file>
+
+        <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

@@ -47,15 +47,20 @@ public class SEICheckerJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Log.i("SEI-Mobile", "Iniciando serviço");
+        Log.i("SEI-Mobile", "Initing service");
 
         SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCE_ID, Context.MODE_PRIVATE);
         String login = sharedPreferences.getString("sei-mobile-login", null);
         String password = sharedPreferences.getString("sei-mobile-password", null);
-        if (login == null || password == null)
+        if (login == null || password == null) {
             Log.i("SEI-mobile", "Service not configured!");
-        else
+            Log.i("SEI-Mobile", "Scheduling job");
+            Util.scheduleJob(getApplicationContext()); // reschedule the job
+            return true;
+        }
+        else {
             Log.i("SEI-mobile", "Service CONFIGURED! sei-mobile-login: " + login);
+        }
 
         createNotificationChannel();
 
@@ -77,10 +82,13 @@ public class SEICheckerJobService extends JobService {
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(createID(), mBuilder.build());
 
-        Util.scheduleJob(getApplicationContext()); // reschedule the job
-
         Thread thread = new Thread(new SEICheckerThread(login, password));
         thread.start();
+        try {
+            thread.join();
+            Log.i("SEI-Mobile", "Scheduling job");
+            Util.scheduleJob(getApplicationContext()); // reschedule the job
+        } catch (InterruptedException e) {}
 
         return true;
     }
