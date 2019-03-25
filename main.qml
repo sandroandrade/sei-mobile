@@ -10,9 +10,8 @@ import "FontAwesome"
 ApplicationWindow {
     id: window
     visible: true
-    width: 320
-    height: 480
     title: qsTr("SEI Mobile")
+    visibility: "FullScreen"
 
     QtObject {
         id: internal
@@ -25,13 +24,11 @@ ApplicationWindow {
 
         ToolButton {
             id: toolButton
-            font.family: FontAwesome.regular
-            text: Icons.faAddressCard
+            font { family: FontAwesome.solid; bold: true } // AwesomeFonts solid require "bold: true"
+            text: stackView.depth > 1 ? Icons.faChevronLeft : Icons.faBars
             onClicked: {
-                if (stackView.depth > 1)
-                    stackView.pop()
-                else
-                    drawer.open()
+                if (stackView.depth > 1) stackView.pop()
+                else drawer.open()
             }
         }
 
