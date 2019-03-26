@@ -20,8 +20,12 @@ public class Util {
         //builder.setRequiresDeviceIdle(true); // device should be idle
         //builder.setRequiresCharging(false); // we don't care if the device is charging or not
 
-        JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
+        final JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(builder.build());
     }
 
+    public static boolean isScheduled(Context context) {
+        final JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        return jobScheduler.getAllPendingJobs().size() > 0;
+    }
 }

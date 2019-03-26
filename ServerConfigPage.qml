@@ -86,7 +86,6 @@ Page {
                 var re = /name="hdnCaptcha".*value="(.*)"/
                 if (re.test(NAM.httpRequest.responseText)) {
                     internal.hdnCaptcha = re.exec(NAM.httpRequest.responseText)[1]
-                    console.log("PUSHING")
                     stackView.push("qrc:/LoginPage.qml", {serverSettings: serverSettings})
                 } else {
                     errorText.text = "erro ao obter captcha\nverifique os dados acima"

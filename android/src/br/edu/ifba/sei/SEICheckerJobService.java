@@ -23,6 +23,14 @@ public class SEICheckerJobService extends JobService {
     private static final String CHANNEL_ID = "br.edu.ifba.sei.MYCHANNEL";
     public static final String PREFERENCE_ID = "br.edu.ifba.sei.PREFERENCE_FILE_KEY";
 
+    public static void startMyService(Context ctx) {
+        Log.i("sei-mobile", "Service scheduled? " + Util.isScheduled(ctx));
+        if (!Util.isScheduled(ctx)) {
+            Log.i("sei-mobile", "Scheduling service");
+            Util.scheduleJob(ctx);
+        }
+    }
+
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -47,19 +55,19 @@ public class SEICheckerJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Log.i("SEI-Mobile", "Initing service");
+        Log.i("sei-mobile", "Initing service");
 
         SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCE_ID, Context.MODE_PRIVATE);
         String login = sharedPreferences.getString("sei-mobile-login", null);
         String password = sharedPreferences.getString("sei-mobile-password", null);
         if (login == null || password == null) {
-            Log.i("SEI-mobile", "Service not configured!");
-            Log.i("SEI-Mobile", "Scheduling job");
+            Log.i("sei-mobile", "Service not configured!");
+            Log.i("sei-mobile", "Scheduling job");
             Util.scheduleJob(getApplicationContext()); // reschedule the job
             return true;
         }
         else {
-            Log.i("SEI-mobile", "Service CONFIGURED! sei-mobile-login: " + login);
+            Log.i("sei-mobile", "Service CONFIGURED! sei-mobile-login: " + login);
         }
 
         createNotificationChannel();
@@ -86,7 +94,7 @@ public class SEICheckerJobService extends JobService {
         thread.start();
         try {
             thread.join();
-            Log.i("SEI-Mobile", "Scheduling job");
+            Log.i("sei-mobile", "Scheduling job");
             Util.scheduleJob(getApplicationContext()); // reschedule the job
         } catch (InterruptedException e) {}
 

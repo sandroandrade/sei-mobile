@@ -53,7 +53,7 @@ class SEICheckerThread implements Runnable
     }
 
     private String get(String url) throws IOException {
-        Log.i("SEI-mobile", "Using client: " + client);
+        Log.i("sei-mobile", "Using client: " + client);
         Request request = new Request.Builder()
             .url(url)
             .build();
@@ -76,8 +76,8 @@ class SEICheckerThread implements Runnable
     }
 
     private String post(String url, String params, String hdnCaptcha) throws IOException {
-        Log.i("SEI-mobile", "Using client: " + client);
-        Log.i("SEI-mobile", "Tentando logar com hdnCaptcha: " + hdnCaptcha);
+        Log.i("sei-mobile", "Using client: " + client);
+        Log.i("sei-mobile", "Trying to log in with hdnCaptcha: " + hdnCaptcha);
         RequestBody requestBody = new FormBody.Builder()
                 .add("hdnCaptcha", hdnCaptcha)
                 .add("hdnIdSistema", "100000100")
@@ -98,7 +98,7 @@ class SEICheckerThread implements Runnable
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            Log.i("SEI-mobile", "Return code: " + response.code());
+            Log.i("sei-mobile", "Return code: " + response.code());
             return response.body().string();
         }
     }
@@ -126,12 +126,12 @@ class SEICheckerThread implements Runnable
 //                            int start = i * maxLogSize;
 //                            int end = (i+1) * maxLogSize;
 //                            end = end > response.length() ? response.length() : end;
-//                            Log.i("SEI-mobile", response.substring(start, end));
+//                            Log.i("sei-mobile", response.substring(start, end));
 //                        }
                 r = Pattern.compile("<title>(.*?)</title>");
                 m = r.matcher(response);
                 if(m.find())
-                    Log.i("SEI-mobile", "Title: " + m.group(1));
+                    Log.i("sei-mobile", "Title: " + m.group(1));
             }
         } catch (IOException e) {}
     }
