@@ -10,7 +10,6 @@ Page {
 
     ColumnLayout {
         id: columnLayout
-        visible: false
         anchors.centerIn: parent
         spacing: 20
         width: parent.width*0.75
@@ -76,9 +75,6 @@ Page {
             txtSiglaOrgaoSistema.text = serverSettings.siglaOrgaoSistema
             txtSiglaSistema.text = serverSettings.siglaSistema
             getCaptcha()
-        }
-        else {
-            columnLayout.visible = true
         }
     }
 

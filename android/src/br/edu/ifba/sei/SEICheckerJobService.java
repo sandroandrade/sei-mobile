@@ -60,7 +60,7 @@ public class SEICheckerJobService extends JobService {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCE_ID, Context.MODE_PRIVATE);
         String login = sharedPreferences.getString("sei-mobile-login", null);
         String password = sharedPreferences.getString("sei-mobile-password", null);
-        if (login == null || password == null) {
+        if (login == null || password == null || login.equals("") || password.equals("")) {
             Log.i("sei-mobile", "Service not configured!");
             Log.i("sei-mobile", "Scheduling job");
             Util.scheduleJob(getApplicationContext()); // reschedule the job

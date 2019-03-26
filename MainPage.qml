@@ -95,5 +95,9 @@ Page {
     StackView.onRemoved: {
         userSettings.user = ""
         userSettings.password = ""
+        if (Qt.platform.os == "android") {
+            configurator.username = ""
+            configurator.password = ""
+        }
     }
 }

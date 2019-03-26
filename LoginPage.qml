@@ -12,7 +12,6 @@ Page {
 
     ColumnLayout {
         id: columnLayout
-        visible: false
         anchors.centerIn: parent
 
         TextField { id: txtUser; placeholderText: "login" }
@@ -45,9 +44,6 @@ Page {
             txtUser.text = userSettings.user
             txtPassword.text = userSettings.password
             login()
-        }
-        else {
-            columnLayout.visible = true
         }
     }
 
