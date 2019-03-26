@@ -51,22 +51,36 @@ Page {
         NAM.busyIndicator = busyIndicator
         NAM.errorText = errorText
         NAM.httpRequest.onreadystatechange=function() {
+            console.log("Response url: " + NAM.httpRequest.getResponseHeader("Location"))
+            console.log("Response status: " + NAM.httpRequest.status)
+            console.log("Response state: " + NAM.httpRequest.readyState)
             if (NAM.httpRequest.readyState === XMLHttpRequest.DONE && NAM.httpRequest.status != 0) {
                 NAM.reset()
-                var re = /<title>:: SEI - Controle de Processos ::<\/title>/
-                if (re.test(NAM.httpRequest.responseText)) {
+                var re1 = /<title>:: SEI - Controle de Processos ::<\/title>/
+                if (re1.test(NAM.httpRequest.responseText)) {
                     var processedResponseText = NAM.httpRequest.responseText.replace(/&nbsp;/g, '').replace(/<!DOCTYPE.*>/g, '').replace(/<meta.*>/g, '').replace(/&/g, '&amp;');
+                    if (Qt.platform.os == "android") {
+                        configurator.username = txtUser.text
+                        configurator.password = txtPassword.text
+                    }
+                    var re2 = /<form id="frmInfraSelecionarUnidade".*infra_hash=(.*?)"/
+                    if (re2.test(NAM.httpRequest.responseText))
+                        internal.infraHash = re2.exec(NAM.httpRequest.responseText)[1]
+                    else
+                        errorText.text = "erro ao obter hash da infraestrutura"
+                    var re3 = /<form id="frmInfraSelecionarUnidade".*infra_unidade_atual=(.*?)&/
+                    if (re3.test(NAM.httpRequest.responseText))
+                        internal.unidadeAtual = re3.exec(NAM.httpRequest.responseText)[1]
+                    else
+                        errorText.text = "erro ao obter unidade atual"
                     stackView.push("qrc:/MainPage.qml",
                                    {currentUser: txtUser.text,
                                     unitiesModelXml: processedResponseText,
                                     receivedModelXml: processedResponseText,
                                     generatedModelXml: processedResponseText,
-                                    userSettings: userSettings
+                                    userSettings: userSettings,
+                                    serverSettings: serverSettings
                                    })
-                    if (Qt.platform.os == "android") {
-                        configurator.username = txtUser.text
-                        configurator.password = txtPassword.text
-                    }
                 } else {
                     errorText.text = "acesso negado"
                 }

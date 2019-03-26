@@ -17,6 +17,8 @@ ApplicationWindow {
     QtObject {
         id: internal
         property string hdnCaptcha
+        property string infraHash
+        property string unidadeAtual
     }
 
     header: ToolBar {
@@ -25,7 +27,7 @@ ApplicationWindow {
 
         ToolButton {
             id: toolButton
-            font { family: FontAwesome.solid; bold: true } // AwesomeFonts solid require "bold: true"
+            font { family: FontAwesome.solid }
             text: stackView.depth > 1 ? Icons.faChevronLeft : Icons.faBars
             onClicked: {
                 if (stackView.depth > 1) stackView.pop()
