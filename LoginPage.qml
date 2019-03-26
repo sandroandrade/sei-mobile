@@ -12,6 +12,7 @@ Page {
 
     ColumnLayout {
         id: columnLayout
+        visible: false
         anchors.centerIn: parent
 
         TextField { id: txtUser; placeholderText: "login" }
@@ -39,10 +40,14 @@ Page {
     }
 
     Component.onCompleted: {
+        if (Qt.platform.os != "android") txtUser.forceActiveFocus()
         if (userSettings.user !== "" && userSettings.password !== "") {
             txtUser.text = userSettings.user
             txtPassword.text = userSettings.password
             login()
+        }
+        else {
+            columnLayout.visible = true
         }
     }
 

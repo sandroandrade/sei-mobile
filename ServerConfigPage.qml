@@ -10,6 +10,7 @@ Page {
 
     ColumnLayout {
         id: columnLayout
+        visible: false
         anchors.centerIn: parent
         spacing: 20
         width: parent.width*0.75
@@ -69,11 +70,15 @@ Page {
     }
 
     Component.onCompleted: {
+        if (Qt.platform.os != "android") txtServerURL.forceActiveFocus()
         if (serverSettings.serverURL !== "" && serverSettings.siglaOrgaoSistema !== "") {
             txtServerURL.text = serverSettings.serverURL
             txtSiglaOrgaoSistema.text = serverSettings.siglaOrgaoSistema
             txtSiglaSistema.text = serverSettings.siglaSistema
             getCaptcha()
+        }
+        else {
+            columnLayout.visible = true
         }
     }
 
