@@ -16,5 +16,7 @@
         <file>networkaccessmanager.js</file>
 
         <file>qtquickcontrols2.conf</file>
+
+        <file>images/sei-logo.png</file>
     </qresource>
 </RCC>

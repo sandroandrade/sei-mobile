@@ -69,7 +69,7 @@ Page {
     }
 
     Component.onCompleted: {
-        if (serverSettings.serverURL !== "https://" && serverSettings.siglaOrgaoSistema !== "") {
+        if (serverSettings.serverURL !== "" && serverSettings.siglaOrgaoSistema !== "") {
             txtServerURL.text = serverSettings.serverURL
             txtSiglaOrgaoSistema.text = serverSettings.siglaOrgaoSistema
             txtSiglaSistema.text = serverSettings.siglaSistema
@@ -86,14 +86,15 @@ Page {
                 var re = /name="hdnCaptcha".*value="(.*)"/
                 if (re.test(NAM.httpRequest.responseText)) {
                     internal.hdnCaptcha = re.exec(NAM.httpRequest.responseText)[1]
+                    console.log("PUSHING")
                     stackView.push("qrc:/LoginPage.qml", {serverSettings: serverSettings})
                 } else {
                     errorText.text = "erro ao obter captcha\nverifique os dados acima"
                 }
             }
         }
-        if (!txtServerURL.text.startsWith('https://'))
-            txtServerURL.text = 'https://' + txtServerURL.text.replace(/^http:\/\//g, '')
+        if (!txtServerURL.text.toLowerCase().startsWith('https://'))
+            txtServerURL.text = 'https://' + txtServerURL.text.replace(/^http:\/\//gi, '')
         NAM.get(txtServerURL.text + '/sip/login.php?sigla_orgao_sistema=' + txtSiglaOrgaoSistema.text + '&sigla_sistema=' + txtSiglaSistema.text)
     }
 }

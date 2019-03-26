@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls.Material 2.12
+import QtQuick.Window 2.12
 
 import "networkaccessmanager.js" as NAM
 
@@ -45,10 +46,23 @@ ApplicationWindow {
         height: window.height
     }
 
-    BusyIndicator {
+    Image {
         id: busyIndicator
+
+        property alias running: animation.running
+        visible: running
+
+        source: "qrc:///images/sei-logo.png"
         anchors.centerIn: parent
-        running: false
+        width: Math.min(Screen.desktopAvailableWidth, Screen.desktopAvailableHeight)/4
+        fillMode: Image.PreserveAspectFit
+        SequentialAnimation on scale {
+            id: animation
+            NumberAnimation { from: 1.0; to: 1.1; duration: 500 }
+            NumberAnimation { from: 1.1; to: 1.0; duration: 500 }
+            loops: Animation.Infinite
+            running: false
+        }
     }
 
     StackView {
