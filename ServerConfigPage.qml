@@ -51,7 +51,7 @@ Page {
             id: loginButton
             Layout.fillWidth: true
             text: "avançar"
-            onClicked: getCaptcha()
+            onClicked: stackView.push("qrc:/LoginPage.qml", {serverSettings: serverSettings})
             Text {
                 id: errorText
                 color: "#607D8B"
@@ -74,27 +74,7 @@ Page {
             txtServerURL.text = serverSettings.serverURL
             txtSiglaOrgaoSistema.text = serverSettings.siglaOrgaoSistema
             txtSiglaSistema.text = serverSettings.siglaSistema
-            getCaptcha()
+            stackView.push("qrc:/LoginPage.qml", {serverSettings: serverSettings})
         }
-    }
-
-    function getCaptcha() {
-        NAM.busyIndicator = busyIndicator
-        NAM.errorText = errorText
-        NAM.httpRequest.onreadystatechange=function() {
-            if (NAM.httpRequest.readyState === XMLHttpRequest.DONE && NAM.httpRequest.status != 0) {
-                NAM.reset()
-                var re = /name="hdnCaptcha".*value="(.*)"/
-                if (re.test(NAM.httpRequest.responseText)) {
-                    internal.hdnCaptcha = re.exec(NAM.httpRequest.responseText)[1]
-                    stackView.push("qrc:/LoginPage.qml", {serverSettings: serverSettings})
-                } else {
-                    errorText.text = "erro ao obter captcha\nverifique os dados acima"
-                }
-            }
-        }
-        if (!txtServerURL.text.toLowerCase().startsWith('https://'))
-            txtServerURL.text = 'https://' + txtServerURL.text.replace(/^http:\/\//gi, '')
-        NAM.get(txtServerURL.text + '/sip/login.php?sigla_orgao_sistema=' + txtSiglaOrgaoSistema.text + '&sigla_sistema=' + txtSiglaSistema.text)
     }
 }

@@ -51,9 +51,6 @@ Page {
         NAM.busyIndicator = busyIndicator
         NAM.errorText = errorText
         NAM.httpRequest.onreadystatechange=function() {
-            console.log("Response url: " + NAM.httpRequest.getResponseHeader("Location"))
-            console.log("Response status: " + NAM.httpRequest.status)
-            console.log("Response state: " + NAM.httpRequest.readyState)
             if (NAM.httpRequest.readyState === XMLHttpRequest.DONE && NAM.httpRequest.status != 0) {
                 NAM.reset()
                 var re1 = /<title>:: SEI - Controle de Processos ::<\/title>/
@@ -63,16 +60,6 @@ Page {
                         configurator.username = txtUser.text
                         configurator.password = txtPassword.text
                     }
-                    var re2 = /<form id="frmInfraSelecionarUnidade".*infra_hash=(.*?)"/
-                    if (re2.test(NAM.httpRequest.responseText))
-                        internal.infraHash = re2.exec(NAM.httpRequest.responseText)[1]
-                    else
-                        errorText.text = "erro ao obter hash da infraestrutura"
-                    var re3 = /<form id="frmInfraSelecionarUnidade".*infra_unidade_atual=(.*?)&/
-                    if (re3.test(NAM.httpRequest.responseText))
-                        internal.unidadeAtual = re3.exec(NAM.httpRequest.responseText)[1]
-                    else
-                        errorText.text = "erro ao obter unidade atual"
                     stackView.push("qrc:/MainPage.qml",
                                    {currentUser: txtUser.text,
                                     unitiesModelXml: processedResponseText,
@@ -86,8 +73,10 @@ Page {
                 }
             }
         }
-        NAM.post('https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI',
-                 'hdnCaptcha=' + internal.hdnCaptcha + '&hdnIdSistema=100000100&hdnMenuSistema=&hdnModuloSistema=&hdnSiglaOrgaoSistema=IFBA&hdnSiglaSistema=SEI&pwdSenha=' + txtPassword.text + '&sbmLogin=Acessar&selOrgao=0&txtUsuario=' + txtUser.text)
+        if (!serverSettings.serverURL.toLowerCase().startsWith('https://'))
+            serverSettings.serverURL = 'https://' + serverSettings.serverURL.replace(/^http:\/\//gi, '')
+        NAM.post(serverSettings.serverURL + '/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI',
+                 'hdnIdSistema=100000100&hdnMenuSistema=&hdnModuloSistema=&hdnSiglaOrgaoSistema=IFBA&hdnSiglaSistema=SEI&pwdSenha=' + txtPassword.text + '&sbmLogin=Acessar&selOrgao=0&txtUsuario=' + txtUser.text)
     }
 
     StackView.onRemoved: {

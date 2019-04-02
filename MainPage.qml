@@ -39,9 +39,6 @@ Page {
                 NAM.busyIndicator = busyIndicator
                 NAM.errorText = errorText
                 NAM.httpRequest.onreadystatechange=function() {
-                    console.log("Response headers: " + NAM.httpRequest.getAllResponseHeaders())
-                    console.log("Response status: " + NAM.httpRequest.status)
-                    console.log("Response state: " + NAM.httpRequest.readyState)
                     if (NAM.httpRequest.readyState === XMLHttpRequest.DONE && NAM.httpRequest.status != 0) {
                         NAM.reset()
                         var re = /<title>:: SEI - Controle de Processos ::<\/title>/
@@ -54,11 +51,9 @@ Page {
                         }
                     }
                 }
-                console.log("Unidade atual: " + internal.unidadeAtual)
-                console.log("Nova unidade: " + model.get(currentIndex).value)
-                console.log("Infra hash: " + internal.infraHash)
-                NAM.post('https://sei.ifba.edu.br/sei/inicializar.php?infra_sistema=100000100&infra_unidade_atual=' + internal.unidadeAtual + '&infra_hash=' + internal.infraHash,
-                         'selInfraUnidades=' + model.get(currentIndex).value)
+                console.log("Posting to " + serverSettings.serverURL + '/sei/inicializar.php')
+                console.log("Params: " + 'selInfraUnidades=' + model.get(currentIndex).value)
+                NAM.post(serverSettings.serverURL + '/sei/inicializar.php', 'selInfraUnidades=' + model.get(currentIndex).value)
             }
         }
 

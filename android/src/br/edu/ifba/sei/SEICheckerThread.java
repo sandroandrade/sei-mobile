@@ -112,6 +112,15 @@ class SEICheckerThread implements Runnable
     public void run() {
         try {
             String response = get("https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA&sigla_sistema=SEI");
+
+//            int maxLogSize = 2000;
+//            for(int i = 0; i <= response.length() / maxLogSize; i++) {
+//                int start = i * maxLogSize;
+//                int end = (i+1) * maxLogSize;
+//                end = end > response.length() ? response.length() : end;
+//                Log.i("sei-mobile", response.substring(start, end));
+//            }
+
             Pattern r = Pattern.compile("name=\"hdnCaptcha\".*value=\"(.*)\"");
             Matcher m = r.matcher(response);
             String hdnCaptcha;
@@ -121,13 +130,6 @@ class SEICheckerThread implements Runnable
                                 "hdnCaptcha=" + hdnCaptcha + "&hdnIdSistema=100000100&hdnMenuSistema=&hdnModuloSistema=&hdnSiglaOrgaoSistema=IFBA&hdnSiglaSistema=SEI&pwdSenha=iFba_4$s&sbmLogin=Acessar&selOrgao=0&txtUsuario=sandroandrade",
                                 hdnCaptcha);
 
-//                        int maxLogSize = 2000;
-//                        for(int i = 0; i <= response.length() / maxLogSize; i++) {
-//                            int start = i * maxLogSize;
-//                            int end = (i+1) * maxLogSize;
-//                            end = end > response.length() ? response.length() : end;
-//                            Log.i("sei-mobile", response.substring(start, end));
-//                        }
                 r = Pattern.compile("<title>(.*?)</title>");
                 m = r.matcher(response);
                 if(m.find())

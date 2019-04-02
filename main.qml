@@ -14,13 +14,6 @@ ApplicationWindow {
     title: qsTr("SEI Mobile")
     visibility: "FullScreen"
 
-    QtObject {
-        id: internal
-        property string hdnCaptcha
-        property string infraHash
-        property string unidadeAtual
-    }
-
     header: ToolBar {
         Material.foreground: "white"
         contentHeight: toolButton.implicitHeight
