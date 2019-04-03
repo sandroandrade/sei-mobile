@@ -1,15 +1,15 @@
 #include "webscraper.h"
 
 #include <QNetworkReply>
+#include <QQmlContext>
 #include <QRegularExpression>
 #include <QUrlQuery>
-#include <QQmlContext>
 #include <QXmlQuery>
 
 #include "qqmlengine.h"
 
-#include <tidy.h>
 #include <buffio.h>
+#include <tidy.h>
 
 WebScraper::WebScraper(QObject *parent)
     : QObject(parent),
@@ -44,8 +44,9 @@ QString WebScraper::source() const
 void WebScraper::setSource(QString &source)
 {
     if (_source != source) {
-        if (!source.toLower().startsWith("http"))
+        if (!source.toLower().startsWith("http")) {
             source = "http://" + source;
+        }
         _source = source;
         emit sourceChanged();
     }
@@ -118,7 +119,7 @@ void WebScraper::load()
 
 void WebScraper::networkReplyFinished()
 {
-    QNetworkReply *reply = dynamic_cast<QNetworkReply *>(sender());
+    auto reply = dynamic_cast<QNetworkReply *>(sender());
 
     if (reply->error() != QNetworkReply::NoError) {
         _errorString = reply->errorString();
@@ -137,10 +138,11 @@ void WebScraper::networkReplyFinished()
             }
             else {
                 tidyPayload();
-                if (!_query.isEmpty())
+                if (!_query.isEmpty()) {
                     evaluateQuery();
-                else
+                } else {
                     setStatus(WebScraper::Ready);
+                }
             }
             break;
         }
@@ -169,8 +171,9 @@ void WebScraper::setStatus(WebScraper::Status status)
 QByteArray WebScraper::createPostData() const
 {
     QUrlQuery urlQuery;
-    for (auto const& [key, val] : _postData.toStdMap())
+    for (auto const& [key, val] : _postData.toStdMap()) {
         urlQuery.addQueryItem(QString(key), val.toString());
+    }
 
     return urlQuery.toString(QUrl::FullyEncoded).toUtf8();
 }
