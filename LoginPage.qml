@@ -27,8 +27,9 @@ Page {
             "selOrgao": "0",
             "txtUsuario": txtUser.text
         }
+        query: "//*[@id=\"selInfraUnidades\"]/option"
         onStatusChanged: {
-            if (status === WebScraper.Ready)   console.log("OK")
+            if (status === WebScraper.Ready)   console.log(payload)
             if (status === WebScraper.Error)   console.log(errorString())
             if (status === WebScraper.Invalid) console.log("Validator failed")
         }

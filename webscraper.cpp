@@ -4,8 +4,12 @@
 #include <QRegularExpression>
 #include <QUrlQuery>
 #include <QQmlContext>
+#include <QXmlQuery>
 
 #include "qqmlengine.h"
+
+#include <tidy.h>
+#include <buffio.h>
 
 WebScraper::WebScraper(QObject *parent)
     : QObject(parent),
@@ -73,6 +77,19 @@ void WebScraper::setValidator(const QString &validator)
     }
 }
 
+QString WebScraper::query() const
+{
+    return _query;
+}
+
+void WebScraper::setQuery(const QString &query)
+{
+    if (_query != query) {
+        _query = query;
+        emit queryChanged();
+    }
+}
+
 QString WebScraper::payload() const
 {
     return _payload;
@@ -114,10 +131,17 @@ void WebScraper::networkReplyFinished()
     switch (statusCode) {
         case 200: {
             _payload = reply->readAll();
-            if (!_validator.isEmpty() && !QRegularExpression(_validator).match(_payload).hasMatch())
+            if (!_validator.isEmpty() && !QRegularExpression(_validator).match(_payload).hasMatch()) {
+                _errorString = QStringLiteral("Validator '%1' failed!").arg(_validator);
                 setStatus(WebScraper::Invalid);
-            else
-                setStatus(WebScraper::Ready);
+            }
+            else {
+                tidyPayload();
+                if (!_query.isEmpty())
+                    evaluateQuery();
+                else
+                    setStatus(WebScraper::Ready);
+            }
             break;
         }
         case 302: {
@@ -164,4 +188,37 @@ void WebScraper::startRequest()
         QNetworkReply *reply = qmlContext(this)->engine()->networkAccessManager()->post(request, createPostData());
         connect (reply, &QNetworkReply::finished, this, &WebScraper::networkReplyFinished);
     }
+}
+
+void WebScraper::tidyPayload()
+{
+    TidyDoc tdoc = tidyCreate();
+    tidyOptSetBool(tdoc, TidyXmlOut, yes);
+    tidyOptSetBool(tdoc, TidyQuiet, yes);
+    tidyOptSetBool(tdoc, TidyNumEntities, yes);
+    tidyOptSetBool(tdoc, TidyShowWarnings, no);
+
+    tidyParseString(tdoc, _payload.toUtf8());
+    tidyCleanAndRepair(tdoc);
+    TidyBuffer output = {nullptr, nullptr, 0, 0, 0};
+    tidySaveBuffer(tdoc, &output);
+    _payload = QString(reinterpret_cast<char*>(output.bp));
+}
+
+void WebScraper::evaluateQuery()
+{
+    QXmlQuery query;
+
+    query.setFocus(_payload);
+    query.setQuery(_query);
+
+    if (!query.isValid()) {
+        _errorString = QStringLiteral("Query '%1' is invalid!").arg(_query);
+        setStatus(WebScraper::Invalid);
+
+        return;
+    }
+
+    query.evaluateTo(&_payload);
+    setStatus(WebScraper::Ready);
 }

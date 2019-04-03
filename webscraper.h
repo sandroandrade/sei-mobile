@@ -14,6 +14,7 @@ class WebScraper : public QObject
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(QVariantMap postData READ postData WRITE setPostData NOTIFY postDataChanged)
     Q_PROPERTY(QString validator READ validator WRITE setValidator NOTIFY validatorChanged)
+    Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
     Q_PROPERTY(QString payload READ payload NOTIFY payloadChanged)
 
 public:
@@ -37,6 +38,9 @@ public:
     QString validator() const;
     void setValidator(const QString &validator);
 
+    QString query() const;
+    void setQuery(const QString &query);
+
     QString payload() const;
 
     Q_INVOKABLE QString errorString() const;
@@ -48,6 +52,7 @@ Q_SIGNALS:
     void sourceChanged();
     void postDataChanged();
     void validatorChanged();
+    void queryChanged();
     void payloadChanged();
 
 private Q_SLOTS:
@@ -57,6 +62,8 @@ private:
     void setStatus(Status status);
     QByteArray createPostData() const;
     void startRequest();
+    void tidyPayload();
+    void evaluateQuery();
 
 private:
     Status _status;
@@ -64,6 +71,7 @@ private:
     QString _source;
     QVariantMap _postData;
     QString _validator;
+    QString _query;
     QString _payload;
     QString _errorString;
 };
