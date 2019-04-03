@@ -3,12 +3,37 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.1
 
+import br.edu.ifba.gsort.webscraping 1.0
+
 import "networkaccessmanager.js" as NAM
 
 Page {
     title: qsTr("Login")
 
     property Settings serverSettings
+
+    WebScraper {
+        source: "https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI"
+        method: WebScraper.POST
+        validator: "<title>:: SEI - Controle de Processos ::</title>"
+        postData: {
+            "hdnIdSistema": "100000100",
+            "hdnMenuSistema": "",
+            "hdnModuloSistema": "",
+            "hdnSiglaOrgaoSistema": "IFBA",
+            "hdnSiglaSistema": "SEI",
+            "pwdSenha": txtPassword.text,
+            "sbmLogin": "Acessar",
+            "selOrgao": "0",
+            "txtUsuario": txtUser.text
+        }
+        onStatusChanged: {
+            if (status === WebScraper.Ready)   console.log("OK")
+            if (status === WebScraper.Error)   console.log(errorString())
+            if (status === WebScraper.Invalid) console.log("Validator failed")
+        }
+        Component.onCompleted: load()
+    }
 
     ColumnLayout {
         id: columnLayout

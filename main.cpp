@@ -1,12 +1,13 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QDebug>
 
 #ifdef Q_OS_ANDROID
 #include <QtAndroid>
 #include <QQmlContext>
 #include "seicheckerserviceconfigurator.h"
 #endif
+
+#include "webscraper.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +17,8 @@ int main(int argc, char *argv[])
     app.setOrganizationName("ifba");
     app.setOrganizationDomain("ifba.edu.br");
     app.setApplicationName("sei-mobile");
+
+    qmlRegisterType<WebScraper>("br.edu.ifba.gsort.webscraping", 1, 0, "WebScraper");
 
     QQmlApplicationEngine engine;
 

@@ -3,8 +3,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.1
 
-import "networkaccessmanager.js" as NAM
-
 Page {
     title: qsTr("Configuração do Servidor")
 
@@ -69,7 +67,8 @@ Page {
     }
 
     Component.onCompleted: {
-        if (Qt.platform.os != "android") txtServerURL.forceActiveFocus()
+        if (Qt.platform.os != "android")
+            txtServerURL.forceActiveFocus()
         if (serverSettings.serverURL !== "" && serverSettings.siglaOrgaoSistema !== "") {
             txtServerURL.text = serverSettings.serverURL
             txtSiglaOrgaoSistema.text = serverSettings.siglaOrgaoSistema
