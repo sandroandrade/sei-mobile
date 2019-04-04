@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.1
 
 Page {
+    property Image busyIndicator
+
     title: qsTr("Configuração do Servidor")
 
     ColumnLayout {
@@ -15,7 +17,9 @@ Page {
         ColumnLayout {
             Layout.preferredWidth: parent.width
             spacing: 2
+
             Label { text: "URL do servidor:" }
+
             SEITextField {
                 id: txtServerURL
                 Layout.preferredWidth: parent.width
@@ -26,7 +30,9 @@ Page {
         ColumnLayout {
             Layout.preferredWidth: parent.width
             spacing: 2
+
             Label { text: "Sigla do órgão:" }
+
             SEITextField {
                 id: txtSiglaOrgaoSistema
                 Layout.preferredWidth: parent.width
@@ -37,7 +43,9 @@ Page {
         ColumnLayout {
             Layout.preferredWidth: parent.width
             spacing: 2
+
             Label { text: "Sigla do sistema:" }
+
             SEITextField {
                 id: txtSiglaSistema
                 Layout.preferredWidth: parent.width
@@ -49,7 +57,8 @@ Page {
             id: loginButton
             Layout.fillWidth: true
             text: "avançar"
-            onClicked: stackView.push("qrc:/LoginPage.qml", {serverSettings: serverSettings})
+            onClicked: stackView.push("qrc:/LoginPage.qml", { busyIndicator: busyIndicator, serverSettings: serverSettings })
+
             Text {
                 id: errorText
                 color: "#607D8B"
@@ -67,13 +76,12 @@ Page {
     }
 
     Component.onCompleted: {
-        if (Qt.platform.os != "android")
-            txtServerURL.forceActiveFocus()
+        if (Qt.platform.os != "android") txtServerURL.forceActiveFocus()
         if (serverSettings.serverURL !== "" && serverSettings.siglaOrgaoSistema !== "") {
             txtServerURL.text = serverSettings.serverURL
             txtSiglaOrgaoSistema.text = serverSettings.siglaOrgaoSistema
             txtSiglaSistema.text = serverSettings.siglaSistema
-            stackView.push("qrc:/LoginPage.qml", {serverSettings: serverSettings})
+            stackView.push("qrc:/LoginPage.qml", { busyIndicator: busyIndicator, serverSettings: serverSettings })
         }
     }
 }

@@ -48,6 +48,7 @@ ApplicationWindow {
         anchors.centerIn: parent
         width: Math.min(Screen.desktopAvailableWidth, Screen.desktopAvailableHeight)/4
         fillMode: Image.PreserveAspectFit
+
         SequentialAnimation on scale {
             id: animation
             NumberAnimation { from: 1.0; to: 1.1; duration: 500 }
@@ -61,6 +62,6 @@ ApplicationWindow {
         id: stackView
         anchors.fill: parent
         visible: !busyIndicator.running
-        initialItem: ServerConfigPage {}
+        initialItem: ServerConfigPage { busyIndicator: busyIndicator }
     }
 }

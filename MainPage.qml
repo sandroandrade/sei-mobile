@@ -25,6 +25,7 @@ Page {
 
     ColumnLayout {
         anchors.fill: parent
+
         ComboBox {
             Layout.preferredWidth: parent.width
             model: XmlListModel {
@@ -64,8 +65,12 @@ Page {
             currentIndex: tabBar.currentIndex
 
             ListView {
-                model: receivedModel
                 clip: true
+                model: XmlListModel {
+                    query: "//*[@id=\"tblProcessosRecebidos\"]/tr[@class=\"infraTrClara\"]"
+                    XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
+                    XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
+                }
                 delegate: ItemDelegate {
                     width: parent.width
                     text: title
@@ -74,19 +79,17 @@ Page {
                     ToolTip.timeout: 5000
                     ToolTip.visible: hovered
                     ToolTip.text: /infraTooltipMostrar\('(.*)','(.*)'\)/.exec(tooltip)[1]
-                }
-                XmlListModel {
-                    id: receivedModel
-                    query: "//*[@id=\"tblProcessosRecebidos\"]/tr[@class=\"infraTrClara\"]"
-                    XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
-                    XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
                 }
                 ScrollIndicator.vertical: ScrollIndicator { }
             }
 
             ListView {
-                model: generatedModel
                 clip: true
+                model: XmlListModel {
+                    query: "//*[@id=\"tblProcessosGerados\"]/tr[@class=\"infraTrClara\"]"
+                    XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
+                    XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
+                }
                 delegate: ItemDelegate {
                     width: parent.width
                     text: title
@@ -95,12 +98,6 @@ Page {
                     ToolTip.timeout: 5000
                     ToolTip.visible: hovered
                     ToolTip.text: /infraTooltipMostrar\('(.*)','(.*)'\)/.exec(tooltip)[1]
-                }
-                XmlListModel {
-                    id: generatedModel
-                    query: "//*[@id=\"tblProcessosGerados\"]/tr[@class=\"infraTrClara\"]"
-                    XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
-                    XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
                 }
                 ScrollIndicator.vertical: ScrollIndicator { }
             }
@@ -111,12 +108,8 @@ Page {
         id: tabBar
         currentIndex: swipeView.currentIndex
 
-        TabButton {
-            text: qsTr("Received")
-        }
-        TabButton {
-            text: qsTr("Generated")
-        }
+        TabButton { text: qsTr("Received") }
+        TabButton { text: qsTr("Generated") }
     }
 
     StackView.onRemoved: {
