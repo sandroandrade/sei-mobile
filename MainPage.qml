@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.12
 import QtQuick.XmlListModel 2.12
 import Qt.labs.settings 1.1
 
+import br.edu.ifba.gsort.webscraping 1.0
+
 import "networkaccessmanager.js" as NAM
 
 Page {
@@ -13,6 +15,7 @@ Page {
     property alias generatedModelXml: generatedModel.xml
     property Settings userSettings
     property Settings serverSettings
+    property WebScraper webScraper
 
     title: qsTr("SEI Mobile - " + currentUser)
 
@@ -66,11 +69,13 @@ Page {
 
             ListView {
                 clip: true
-                model: XmlListModel {
+                XmlListModel {
+                    id: receivedModel
                     query: "//*[@id=\"tblProcessosRecebidos\"]/tr[@class=\"infraTrClara\"]"
                     XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
                     XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
                 }
+                model: receivedModel
                 delegate: ItemDelegate {
                     width: parent.width
                     text: title
@@ -85,11 +90,13 @@ Page {
 
             ListView {
                 clip: true
-                model: XmlListModel {
+                XmlListModel {
+                    id: generatedModel
                     query: "//*[@id=\"tblProcessosGerados\"]/tr[@class=\"infraTrClara\"]"
                     XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
                     XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
                 }
+                model: generatedModel
                 delegate: ItemDelegate {
                     width: parent.width
                     text: title

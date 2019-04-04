@@ -40,7 +40,8 @@ Page {
                                 receivedModelXml: payload,
                                 generatedModelXml: payload,
                                 userSettings: userSettings,
-                                serverSettings: serverSettings
+                                serverSettings: serverSettings,
+                                webScraper: loginScraper
                                })
             }
             if (status === WebScraper.Error)   errorText.text = errorString()
