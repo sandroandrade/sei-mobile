@@ -10,9 +10,6 @@ import "networkaccessmanager.js" as NAM
 
 Page {
     property string currentUser
-    property alias unitiesModelXml: unitiesModel.xml
-    property alias receivedModelXml: receivedModel.xml
-    property alias generatedModelXml: generatedModel.xml
     property Settings userSettings
     property Settings serverSettings
     property WebScraper webScraper
@@ -32,7 +29,7 @@ Page {
         ComboBox {
             Layout.preferredWidth: parent.width
             model: XmlListModel {
-                id: unitiesModel
+                xml: webScraper.payload
                 query: "//*[@id=\"selInfraUnidades\"]/option"
                 XmlRole { name: "unity"; query: "string()" }
                 XmlRole { name: "value"; query: "@value/string()" }
@@ -69,13 +66,12 @@ Page {
 
             ListView {
                 clip: true
-                XmlListModel {
-                    id: receivedModel
+                model: XmlListModel {
+                    xml: webScraper.payload
                     query: "//*[@id=\"tblProcessosRecebidos\"]/tr[@class=\"infraTrClara\"]"
                     XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
                     XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
                 }
-                model: receivedModel
                 delegate: ItemDelegate {
                     width: parent.width
                     text: title
@@ -90,13 +86,12 @@ Page {
 
             ListView {
                 clip: true
-                XmlListModel {
-                    id: generatedModel
+                model: XmlListModel {
+                    xml: webScraper.payload
                     query: "//*[@id=\"tblProcessosGerados\"]/tr[@class=\"infraTrClara\"]"
                     XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
                     XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
                 }
-                model: generatedModel
                 delegate: ItemDelegate {
                     width: parent.width
                     text: title

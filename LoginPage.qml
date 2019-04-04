@@ -36,9 +36,6 @@ Page {
                 }
                 stackView.push("qrc:/MainPage.qml",
                                {currentUser: txtUser.text,
-                                unitiesModelXml: payload,
-                                receivedModelXml: payload,
-                                generatedModelXml: payload,
                                 userSettings: userSettings,
                                 serverSettings: serverSettings,
                                 webScraper: loginScraper
