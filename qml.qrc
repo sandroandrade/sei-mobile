@@ -8,10 +8,11 @@
         <file>FontAwesome/qmldir</file>
 
         <file>main.qml</file>
+        <file>ServerConfigPage.qml</file>
         <file>LoginPage.qml</file>
         <file>MainPage.qml</file>
-        <file>ServerConfigPage.qml</file>
         <file>SEITextField.qml</file>
+        <file>ProcessDelegate.qml</file>
 
         <file>networkaccessmanager.js</file>
 

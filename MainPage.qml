@@ -41,7 +41,8 @@ Page {
                     processesScraper.load()
                 }
             }
-            Layout.preferredWidth: parent.width
+            Layout.fillWidth: true
+            Layout.margins: 10
             model: XmlListModel {
                 id: comboBoxModel
                 xml: processesScraper.payload
@@ -66,43 +67,42 @@ Page {
             Layout.fillHeight: true
             currentIndex: tabBar.currentIndex
 
+            Component {
+                id: processDelegate
+                ProcessDelegate {
+                    anchors { left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10 }
+                    processId: id
+                    processType: /infraTooltipMostrar\('(.*)','(.*)'\)/.exec(typeAndSpecification)[2]
+                    processSpecification: /infraTooltipMostrar\('(.*)','(.*)'\)/.exec(typeAndSpecification)[1]
+                    processAssignment: assignedTo
+                }
+            }
+
             ListView {
                 clip: true
+                spacing: 10
                 model: XmlListModel {
                     xml: processesScraper.payload
                     query: "//*[@id=\"tblProcessosRecebidos\"]/tr[@class=\"infraTrClara\"]"
-                    XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
-                    XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
+                    XmlRole { name: "id"; query: "td[1]/input/@title/string()" }
+                    XmlRole { name: "typeAndSpecification"; query: "td[3]/a/@onmouseover/string()" }
+                    XmlRole { name: "assignedTo"; query: "td[4]/a/string()" }
                 }
-                delegate: ItemDelegate {
-                    width: parent.width
-                    text: title
-                    hoverEnabled: true
-                    ToolTip.delay: 1000
-                    ToolTip.timeout: 5000
-                    ToolTip.visible: hovered
-                    ToolTip.text: /infraTooltipMostrar\('(.*)','(.*)'\)/.exec(tooltip)[1]
-                }
+                delegate: processDelegate
                 ScrollIndicator.vertical: ScrollIndicator { }
             }
 
             ListView {
                 clip: true
+                spacing: 10
                 model: XmlListModel {
                     xml: processesScraper.payload
                     query: "//*[@id=\"tblProcessosGerados\"]/tr[@class=\"infraTrClara\"]"
-                    XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
-                    XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
+                    XmlRole { name: "id"; query: "td[1]/input/@title/string()" }
+                    XmlRole { name: "typeAndSpecification"; query: "td[3]/a/@onmouseover/string()" }
+                    XmlRole { name: "assignedTo"; query: "td[4]/a/string()" }
                 }
-                delegate: ItemDelegate {
-                    width: parent.width
-                    text: title
-                    hoverEnabled: true
-                    ToolTip.delay: 1000
-                    ToolTip.timeout: 5000
-                    ToolTip.visible: hovered
-                    ToolTip.text: /infraTooltipMostrar\('(.*)','(.*)'\)/.exec(tooltip)[1]
-                }
+                delegate: processDelegate
                 ScrollIndicator.vertical: ScrollIndicator { }
             }
         }
@@ -112,8 +112,8 @@ Page {
         id: tabBar
         currentIndex: swipeView.currentIndex
 
-        TabButton { text: qsTr("Received") }
-        TabButton { text: qsTr("Generated") }
+        TabButton { text: "Recebidos" }
+        TabButton { text: "Gerados" }
     }
 
     StackView.onRemoved: {

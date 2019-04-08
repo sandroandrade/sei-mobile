@@ -138,7 +138,7 @@ void WebScraper::networkReplyFinished()
     }
 
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    QString payload = reply->readAll();
+    QString payload = QTextCodec::codecForName("iso-8859-1")->toUnicode(reply->readAll());
     switch (statusCode) {
         case 200: { // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             if (!_validator.isEmpty() && !QRegularExpression(_validator).match(payload).hasMatch()) {
