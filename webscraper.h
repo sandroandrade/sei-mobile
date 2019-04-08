@@ -16,6 +16,7 @@ class WebScraper : public QObject
     Q_PROPERTY(QString validator READ validator WRITE setValidator NOTIFY validatorChanged)
     Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
     Q_PROPERTY(QString payload READ payload WRITE setPayload NOTIFY payloadChanged)
+    Q_PROPERTY(QString defaultProtocol READ defaultProtocol WRITE setDefaultProtocol NOTIFY defaultProtocolChanged)
 
 public:
     explicit WebScraper(QObject *parent = nullptr);
@@ -44,6 +45,9 @@ public:
     QString payload() const;
     void setPayload(const QString &payload);
 
+    QString defaultProtocol() const;
+    void setDefaultProtocol(const QString &defaultProtocol);
+
     Q_INVOKABLE QString errorString() const;
     Q_INVOKABLE void load();
 
@@ -55,6 +59,7 @@ Q_SIGNALS:
     void validatorChanged();
     void queryChanged();
     void payloadChanged();
+    void defaultProtocolChanged();
 
 private Q_SLOTS:
     void networkReplyFinished();
@@ -75,6 +80,7 @@ private:
     QString _validator;
     QString _query;
     QString _payload;
+    QString _defaultProtocol;
     QString _errorString;
 };
 

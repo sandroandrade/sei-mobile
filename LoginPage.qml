@@ -14,6 +14,7 @@ Page {
     WebScraper {
         id: loginScraper
         method: WebScraper.POST
+        defaultProtocol: "https"
         validator: "<title>:: SEI - Controle de Processos ::</title>"
         onStatusChanged: {
             if (stackView.depth === 2) { // FIX ME
@@ -59,13 +60,13 @@ Page {
     }
 
     function login() {
-        loginScraper.source = "https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI"
+        loginScraper.source = serverSettings.serverURL + "/sip/login.php?sigla_orgao_sistema=" + serverSettings.siglaOrgaoSistema + "\&sigla_sistema=" + serverSettings.siglaSistema
         loginScraper.postData = {
             "hdnIdSistema": "100000100",
             "hdnMenuSistema": "",
             "hdnModuloSistema": "",
-            "hdnSiglaOrgaoSistema": "IFBA",
-            "hdnSiglaSistema": "SEI",
+            "hdnSiglaOrgaoSistema": serverSettings.siglaOrgaoSistema,
+            "hdnSiglaSistema": serverSettings.siglaSistema,
             "pwdSenha": txtPassword.text,
             "sbmLogin": "Acessar",
             "selOrgao": "0",

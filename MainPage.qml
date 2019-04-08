@@ -36,7 +36,7 @@ Page {
             }
             function handleCurrentIndexChanged() {
                 if (currentIndex !== -1) {
-                    processesScraper.source = "https://sei.ifba.edu.br/sei/inicializar.php"
+                    processesScraper.source = serverSettings.serverURL + "/sei/inicializar.php"
                     processesScraper.postData = { "selInfraUnidades": unityComboBox.model.get(unityComboBox.currentIndex).value }
                     processesScraper.load()
                 }

@@ -13,7 +13,8 @@
 WebScraper::WebScraper(QObject *parent) //NOLINT(cppcoreguidelines-pro-type-member-init,hicpp-member-init)
     : QObject(parent),
       _method(WebScraper::GET),
-      _originalMethod(WebScraper::GET)
+      _originalMethod(WebScraper::GET),
+      _defaultProtocol("http")
 {
     setStatus(WebScraper::Null);
 }
@@ -45,7 +46,7 @@ void WebScraper::setSource(QString &source)
 {
     if (_source != source) {
         if (!source.startsWith("http", Qt::CaseInsensitive)) {
-            source = "http://" + source;
+            source = _defaultProtocol + "://" + source;
         }
         _source = source;
         emit sourceChanged();
@@ -101,6 +102,19 @@ void WebScraper::setPayload(const QString &payload)
     if (_payload != payload) {
         _payload = payload;
         emit payloadChanged();
+    }
+}
+
+QString WebScraper::defaultProtocol() const
+{
+    return _defaultProtocol;
+}
+
+void WebScraper::setDefaultProtocol(const QString &defaultProtocol)
+{
+    if (_defaultProtocol != defaultProtocol) {
+        _defaultProtocol = defaultProtocol;
+        emit defaultProtocolChanged();
     }
 }
 

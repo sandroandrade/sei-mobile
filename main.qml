@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 import QtQuick.Controls.Material 2.12
 import QtQuick.Window 2.12
 
@@ -36,6 +37,14 @@ ApplicationWindow {
         id: drawer
         width: window.width * 0.66
         height: window.height
+
+        ColumnLayout {
+            width: parent.width
+            ItemDelegate {
+                Layout.fillWidth: true
+                text: "Meus processos"
+            }
+       }
     }
 
     Image {
