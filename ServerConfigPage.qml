@@ -3,8 +3,11 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.1
 
+import br.edu.ifba.gsort.webscraping 1.0
+
 Page {
     property Image busyIndicator
+    property WebScraper webScraper
 
     title: qsTr("Configuração do Servidor")
 
@@ -57,7 +60,7 @@ Page {
             id: loginButton
             Layout.fillWidth: true
             text: "avançar"
-            onClicked: stackView.push("qrc:/LoginPage.qml", { busyIndicator: busyIndicator, serverSettings: serverSettings })
+            onClicked: stackView.push("qrc:/LoginPage.qml", { busyIndicator: busyIndicator, serverSettings: serverSettings, webScraper: webScraper })
 
             Text {
                 id: errorText
@@ -81,7 +84,7 @@ Page {
             txtServerURL.text = serverSettings.serverURL
             txtSiglaOrgaoSistema.text = serverSettings.siglaOrgaoSistema
             txtSiglaSistema.text = serverSettings.siglaSistema
-            stackView.push("qrc:/LoginPage.qml", { busyIndicator: busyIndicator, serverSettings: serverSettings })
+            stackView.push("qrc:/LoginPage.qml", { busyIndicator: busyIndicator, serverSettings: serverSettings, webScraper: webScraper })
         }
     }
 }

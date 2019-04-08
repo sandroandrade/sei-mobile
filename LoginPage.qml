@@ -8,33 +8,9 @@ import br.edu.ifba.gsort.webscraping 1.0
 Page {
     property Image busyIndicator
     property Settings serverSettings
+    property WebScraper webScraper
 
     title: qsTr("Login")
-
-    WebScraper {
-        id: loginScraper
-        method: WebScraper.POST
-        defaultProtocol: "https"
-        validator: "<title>:: SEI - Controle de Processos ::</title>"
-        onStatusChanged: {
-            if (stackView.depth === 2) { // FIX ME
-                if (status === WebScraper.Ready) {
-                    if (Qt.platform.os == "android") {
-                        configurator.username = txtUser.text
-                        configurator.password = txtPassword.text
-                    }
-                    stackView.push("qrc:/MainPage.qml", {
-                                       currentUser: txtUser.text,
-                                       userSettings: userSettings,
-                                       serverSettings: serverSettings,
-                                       processesScraper: loginScraper
-                                  })
-                }
-                if (status === WebScraper.Error)   errorText.text = errorString()
-                if (status === WebScraper.Invalid) errorText.text = "acesso negado"
-            }
-        }
-    }
 
     ColumnLayout {
         id: columnLayout
@@ -60,8 +36,9 @@ Page {
     }
 
     function login() {
-        loginScraper.source = serverSettings.serverURL + "/sip/login.php?sigla_orgao_sistema=" + serverSettings.siglaOrgaoSistema + "\&sigla_sistema=" + serverSettings.siglaSistema
-        loginScraper.postData = {
+        errorText.text = ""
+        webScraper.source = serverSettings.serverURL + "/sip/login.php?sigla_orgao_sistema=" + serverSettings.siglaOrgaoSistema + "\&sigla_sistema=" + serverSettings.siglaSistema
+        webScraper.postData = {
             "hdnIdSistema": "100000100",
             "hdnMenuSistema": "",
             "hdnModuloSistema": "",
@@ -72,7 +49,26 @@ Page {
             "selOrgao": "0",
             "txtUsuario": txtUser.text
         }
-        loginScraper.load()
+        webScraper.load()
+    }
+
+    function onWebScraperStatusChanged() {
+        if (stackView.depth === 2) { // FIX ME
+            if (webScraper.status === WebScraper.Ready) {
+                if (Qt.platform.os == "android") {
+                    configurator.username = txtUser.text
+                    configurator.password = txtPassword.text
+                }
+                stackView.push("qrc:/MainPage.qml", {
+                                   currentUser: txtUser.text,
+                                   userSettings: userSettings,
+                                   serverSettings: serverSettings,
+                                   processesScraper: webScraper
+                              })
+            }
+            if (webScraper.status === WebScraper.Error)   errorText.text = errorString()
+            if (webScraper.status === WebScraper.Invalid) errorText.text = "acesso negado"
+        }
     }
 
     Settings {
@@ -88,7 +84,8 @@ Page {
     }
 
     Component.onCompleted: {
-        busyIndicator.running = Qt.binding(function() { return loginScraper.status === WebScraper.Loading })
+        busyIndicator.running = Qt.binding(function() { return webScraper.status === WebScraper.Loading })
+        webScraper.statusChanged.connect(onWebScraperStatusChanged)
         if (Qt.platform.os != "android") txtUser.forceActiveFocus()
         if (userSettings.user !== "" && userSettings.password !== "") {
             txtUser.text = userSettings.user

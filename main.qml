@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls.Material 2.12
 import QtQuick.Window 2.12
 
+import br.edu.ifba.gsort.webscraping 1.0
+
 import "FontAwesome"
 
 ApplicationWindow {
@@ -71,6 +73,13 @@ ApplicationWindow {
         id: stackView
         anchors.fill: parent
         visible: !busyIndicator.running
-        initialItem: ServerConfigPage { busyIndicator: busyIndicator }
+        initialItem: ServerConfigPage {
+            busyIndicator: busyIndicator
+            webScraper: WebScraper {
+                method: WebScraper.POST
+                defaultProtocol: "https"
+                validator: "<title>:: SEI - Controle de Processos ::</title>"
+            }
+        }
     }
 }
