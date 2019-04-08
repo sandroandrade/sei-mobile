@@ -10,9 +10,10 @@
 #include <buffio.h>
 #include <tidy.h>
 
-WebScraper::WebScraper(QObject *parent)
+WebScraper::WebScraper(QObject *parent) //NOLINT(cppcoreguidelines-pro-type-member-init,hicpp-member-init)
     : QObject(parent),
-      _method(WebScraper::GET)
+      _method(WebScraper::GET),
+      _originalMethod(WebScraper::GET)
 {
     setStatus(WebScraper::Null);
 }
@@ -139,7 +140,7 @@ void WebScraper::networkReplyFinished()
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     QString payload = reply->readAll();
     switch (statusCode) {
-        case 200: {
+        case 200: { // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             if (!_validator.isEmpty() && !QRegularExpression(_validator).match(payload).hasMatch()) {
                 _errorString = QStringLiteral("Validator '%1' failed!").arg(_validator);
                 setPayload(payload);
@@ -154,7 +155,7 @@ void WebScraper::networkReplyFinished()
             _method = _originalMethod;
             break;
         }
-        case 302: {
+        case 302: { // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
             _source = QUrl(_source).resolved(QUrl(reply->rawHeader("Location"))).toString();
             _method = WebScraper::GET;
             startRequest();
@@ -216,7 +217,7 @@ void WebScraper::tidyPayload(QString &payload) const
     TidyBuffer output = {nullptr, nullptr, 0, 0, 0};
     tidySaveBuffer(tdoc, &output);
 
-    payload = reinterpret_cast<char*>(output.bp);
+    payload = reinterpret_cast<char*>(output.bp); //NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 }
 
 WebScraper::Status WebScraper::evaluateQuery(QString &payload)
