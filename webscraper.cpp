@@ -5,17 +5,16 @@
 #include <QRegularExpression>
 #include <QUrlQuery>
 #include <QXmlQuery>
-
-#include "qqmlengine.h"
+#include <QtQml>
 
 #include <buffio.h>
 #include <tidy.h>
 
 WebScraper::WebScraper(QObject *parent)
     : QObject(parent),
-      _status(WebScraper::Null),
       _method(WebScraper::GET)
 {
+    setStatus(WebScraper::Null);
 }
 
 WebScraper::Status WebScraper::status() const
@@ -96,6 +95,14 @@ QString WebScraper::payload() const
     return _payload;
 }
 
+void WebScraper::setPayload(const QString &payload)
+{
+    if (_payload != payload) {
+        _payload = payload;
+        emit payloadChanged();
+    }
+}
+
 QString WebScraper::errorString() const
 {
     return _errorString;
@@ -114,6 +121,7 @@ void WebScraper::load()
     }
 
     setStatus(WebScraper::Loading);
+    _originalMethod = _method;
     startRequest();
 }
 
@@ -129,30 +137,32 @@ void WebScraper::networkReplyFinished()
     }
 
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    QString payload = reply->readAll();
     switch (statusCode) {
         case 200: {
-            _payload = reply->readAll();
-            if (!_validator.isEmpty() && !QRegularExpression(_validator).match(_payload).hasMatch()) {
+            if (!_validator.isEmpty() && !QRegularExpression(_validator).match(payload).hasMatch()) {
                 _errorString = QStringLiteral("Validator '%1' failed!").arg(_validator);
+                setPayload(payload);
                 setStatus(WebScraper::Invalid);
             }
             else {
-                tidyPayload();
-                if (!_query.isEmpty()) {
-                    evaluateQuery();
-                } else {
-                    setStatus(WebScraper::Ready);
-                }
+                tidyPayload(payload);
+                Status evaluationStatus = evaluateQuery(payload);
+                setPayload(payload);
+                setStatus(evaluationStatus);
             }
+            _method = _originalMethod;
             break;
         }
         case 302: {
             _source = QUrl(_source).resolved(QUrl(reply->rawHeader("Location"))).toString();
+            _method = WebScraper::GET;
             startRequest();
             break;
         }
         default: {
             _errorString = QStringLiteral("WebScraper finished with status code %1").arg(statusCode);
+            setPayload(payload);
             setStatus(WebScraper::Error);
             break;
         }
@@ -193,7 +203,7 @@ void WebScraper::startRequest()
     }
 }
 
-void WebScraper::tidyPayload()
+void WebScraper::tidyPayload(QString &payload) const
 {
     TidyDoc tdoc = tidyCreate();
     tidyOptSetBool(tdoc, TidyXmlOut, yes);
@@ -201,27 +211,29 @@ void WebScraper::tidyPayload()
     tidyOptSetBool(tdoc, TidyNumEntities, yes);
     tidyOptSetBool(tdoc, TidyShowWarnings, no);
 
-    tidyParseString(tdoc, _payload.toUtf8());
+    tidyParseString(tdoc, payload.toUtf8());
     tidyCleanAndRepair(tdoc);
     TidyBuffer output = {nullptr, nullptr, 0, 0, 0};
     tidySaveBuffer(tdoc, &output);
-    _payload = QString(reinterpret_cast<char*>(output.bp));
+
+    payload = reinterpret_cast<char*>(output.bp);
 }
 
-void WebScraper::evaluateQuery()
+WebScraper::Status WebScraper::evaluateQuery(QString &payload)
 {
-    QXmlQuery query;
+    if (!_query.isEmpty()) {
+        QXmlQuery query;
 
-    query.setFocus(_payload);
-    query.setQuery(_query);
+        query.setFocus(payload);
+        query.setQuery(_query);
 
-    if (!query.isValid()) {
-        _errorString = QStringLiteral("Query '%1' is invalid!").arg(_query);
-        setStatus(WebScraper::Invalid);
+        if (!query.isValid()) {
+            _errorString = QStringLiteral("Query '%1' is invalid!").arg(_query);
+            return WebScraper::Invalid;
+        }
 
-        return;
+        query.evaluateTo(&payload);
     }
 
-    query.evaluateTo(&_payload);
-    setStatus(WebScraper::Ready);
+    return WebScraper::Ready;
 }

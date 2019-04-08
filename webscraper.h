@@ -15,12 +15,12 @@ class WebScraper : public QObject
     Q_PROPERTY(QVariantMap postData READ postData WRITE setPostData NOTIFY postDataChanged)
     Q_PROPERTY(QString validator READ validator WRITE setValidator NOTIFY validatorChanged)
     Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
-    Q_PROPERTY(QString payload READ payload NOTIFY payloadChanged)
+    Q_PROPERTY(QString payload READ payload WRITE setPayload NOTIFY payloadChanged)
 
 public:
     explicit WebScraper(QObject *parent = nullptr);
 
-    enum Status { Null = 0, Ready, Loading, Error, Invalid };
+    enum Status { Null = 0, Loading, Ready, Invalid, Error };
     Q_ENUM(Status)
     Status status() const;
 
@@ -42,6 +42,7 @@ public:
     void setQuery(const QString &query);
 
     QString payload() const;
+    void setPayload(const QString &payload);
 
     Q_INVOKABLE QString errorString() const;
     Q_INVOKABLE void load();
@@ -62,12 +63,13 @@ private:
     void setStatus(Status status);
     QByteArray createPostData() const;
     void startRequest();
-    void tidyPayload();
-    void evaluateQuery();
+    void tidyPayload(QString &payload) const;
+    Status evaluateQuery(QString &payload);
 
 private:
     Status _status;
     Method _method;
+    Method _originalMethod;
     QString _source;
     QVariantMap _postData;
     QString _validator;

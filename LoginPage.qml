@@ -13,36 +13,25 @@ Page {
 
     WebScraper {
         id: loginScraper
-        source: "https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI"
         method: WebScraper.POST
         validator: "<title>:: SEI - Controle de Processos ::</title>"
-        postData: {
-            "hdnIdSistema": "100000100",
-            "hdnMenuSistema": "",
-            "hdnModuloSistema": "",
-            "hdnSiglaOrgaoSistema": "IFBA",
-            "hdnSiglaSistema": "SEI",
-            "pwdSenha": txtPassword.text,
-            "sbmLogin": "Acessar",
-            "selOrgao": "0",
-            "txtUsuario": txtUser.text
-        }
-        //query: "//*[@id=\"selInfraUnidades\"]/option"
         onStatusChanged: {
-            if (status === WebScraper.Ready) {
-                if (Qt.platform.os == "android") {
-                    configurator.username = txtUser.text
-                    configurator.password = txtPassword.text
+            if (stackView.depth === 2) { // FIX ME
+                if (status === WebScraper.Ready) {
+                    if (Qt.platform.os == "android") {
+                        configurator.username = txtUser.text
+                        configurator.password = txtPassword.text
+                    }
+                    stackView.push("qrc:/MainPage.qml", {
+                                       currentUser: txtUser.text,
+                                       userSettings: userSettings,
+                                       serverSettings: serverSettings,
+                                       processesScraper: loginScraper
+                                  })
                 }
-                stackView.push("qrc:/MainPage.qml",
-                               {currentUser: txtUser.text,
-                                userSettings: userSettings,
-                                serverSettings: serverSettings,
-                                webScraper: loginScraper
-                               })
+                if (status === WebScraper.Error)   errorText.text = errorString()
+                if (status === WebScraper.Invalid) errorText.text = "acesso negado"
             }
-            if (status === WebScraper.Error)   errorText.text = errorString()
-            if (status === WebScraper.Invalid) errorText.text = "acesso negado"
         }
     }
 
@@ -58,7 +47,7 @@ Page {
             id: loginButton
             Layout.preferredWidth: parent.width
             text: "login"
-            onClicked: loginScraper.load()
+            onClicked: login()
 
             Text {
                 id: errorText
@@ -67,6 +56,22 @@ Page {
                 anchors { horizontalCenter: parent.horizontalCenter; top: loginButton.bottom; topMargin: columnLayout.spacing }
             }
         }
+    }
+
+    function login() {
+        loginScraper.source = "https://sei.ifba.edu.br/sip/login.php?sigla_orgao_sistema=IFBA\&sigla_sistema=SEI"
+        loginScraper.postData = {
+            "hdnIdSistema": "100000100",
+            "hdnMenuSistema": "",
+            "hdnModuloSistema": "",
+            "hdnSiglaOrgaoSistema": "IFBA",
+            "hdnSiglaSistema": "SEI",
+            "pwdSenha": txtPassword.text,
+            "sbmLogin": "Acessar",
+            "selOrgao": "0",
+            "txtUsuario": txtUser.text
+        }
+        loginScraper.load()
     }
 
     Settings {
@@ -87,7 +92,7 @@ Page {
         if (userSettings.user !== "" && userSettings.password !== "") {
             txtUser.text = userSettings.user
             txtPassword.text = userSettings.password
-            loginScraper.load()
+            login()
         }
     }
 }

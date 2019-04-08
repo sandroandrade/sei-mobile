@@ -12,7 +12,7 @@ Page {
     property string currentUser
     property Settings userSettings
     property Settings serverSettings
-    property WebScraper webScraper
+    property WebScraper processesScraper
 
     title: qsTr("SEI Mobile - " + currentUser)
 
@@ -27,35 +27,37 @@ Page {
         anchors.fill: parent
 
         ComboBox {
+            id: unityComboBox
+            function findCurrentIndex() {
+                var i;
+                for (i = 0; i < comboBoxModel.count; ++i)
+                    if (comboBoxModel.get(i).selected === "selected")
+                        return i;
+            }
+            function handleCurrentIndexChanged() {
+                if (currentIndex !== -1) {
+                    processesScraper.source = "https://sei.ifba.edu.br/sei/inicializar.php"
+                    processesScraper.postData = { "selInfraUnidades": unityComboBox.model.get(unityComboBox.currentIndex).value }
+                    processesScraper.load()
+                }
+            }
             Layout.preferredWidth: parent.width
             model: XmlListModel {
-                xml: webScraper.payload
+                id: comboBoxModel
+                xml: processesScraper.payload
                 query: "//*[@id=\"selInfraUnidades\"]/option"
                 XmlRole { name: "unity"; query: "string()" }
                 XmlRole { name: "value"; query: "@value/string()" }
-            }
-            textRole: "unity"
-            currentIndex: 0
-            onCurrentIndexChanged: {
-                NAM.busyIndicator = busyIndicator
-                NAM.errorText = errorText
-                NAM.httpRequest.onreadystatechange=function() {
-                    if (NAM.httpRequest.readyState === XMLHttpRequest.DONE && NAM.httpRequest.status != 0) {
-                        NAM.reset()
-                        var re = /<title>:: SEI - Controle de Processos ::<\/title>/
-                        if (re.test(NAM.httpRequest.responseText)) {
-                            var processedResponseText = NAM.httpRequest.responseText.replace(/&nbsp;/g, '').replace(/<!DOCTYPE.*>/g, '').replace(/<meta.*>/g, '').replace(/&/g, '&amp;');
-                            receivedModelXml = processedResponseText
-                            generatedModelXml = processedResponseText
-                        } else {
-                            errorText.text = "erro ao obter processos"
-                        }
+                XmlRole { name: "selected"; query: "@selected/string()" }
+                onStatusChanged: {
+                    if (status === XmlListModel.Ready) {
+                        unityComboBox.currentIndexChanged.disconnect(unityComboBox.handleCurrentIndexChanged)
+                        unityComboBox.currentIndex = unityComboBox.findCurrentIndex()
+                        unityComboBox.currentIndexChanged.connect(unityComboBox.handleCurrentIndexChanged)
                     }
                 }
-                console.log("Posting to " + serverSettings.serverURL + '/sei/inicializar.php')
-                console.log("Params: " + 'selInfraUnidades=' + model.get(currentIndex).value)
-                NAM.post(serverSettings.serverURL + '/sei/inicializar.php', 'selInfraUnidades=' + model.get(currentIndex).value)
             }
+            textRole: "unity"
         }
 
         SwipeView {
@@ -67,7 +69,7 @@ Page {
             ListView {
                 clip: true
                 model: XmlListModel {
-                    xml: webScraper.payload
+                    xml: processesScraper.payload
                     query: "//*[@id=\"tblProcessosRecebidos\"]/tr[@class=\"infraTrClara\"]"
                     XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
                     XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
@@ -87,7 +89,7 @@ Page {
             ListView {
                 clip: true
                 model: XmlListModel {
-                    xml: webScraper.payload
+                    xml: processesScraper.payload
                     query: "//*[@id=\"tblProcessosGerados\"]/tr[@class=\"infraTrClara\"]"
                     XmlRole { name: "title"; query: "td[1]/input/@title/string()" }
                     XmlRole { name: "tooltip"; query: "td[3]/a/@onmouseover/string()" }
@@ -121,5 +123,9 @@ Page {
             configurator.username = ""
             configurator.password = ""
         }
+    }
+
+    Component.onCompleted: {
+        busyIndicator.running = Qt.binding(function() { return processesScraper.status === WebScraper.Loading })
     }
 }
