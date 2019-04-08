@@ -44,7 +44,7 @@ QString WebScraper::source() const
 void WebScraper::setSource(QString &source)
 {
     if (_source != source) {
-        if (!source.toLower().startsWith("http")) {
+        if (!source.startsWith("http", Qt::CaseInsensitive)) {
             source = "http://" + source;
         }
         _source = source;
