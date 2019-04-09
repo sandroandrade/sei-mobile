@@ -40,7 +40,7 @@ Page {
                 }
             }
             Layout.fillWidth: true
-            Layout.margins: 10
+            Layout.rightMargin: 10; Layout.leftMargin: 10; Layout.topMargin: 6
             model: XmlListModel {
                 id: comboBoxModel
                 xml: processesScraper.payload
@@ -68,6 +68,7 @@ Page {
             Component {
                 id: processDelegate
                 ProcessDelegate {
+                    width: parent.width
                     anchors { left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10 }
                     processId: id
                     processType: /infraTooltipMostrar\('(.*)','(.*)'\)/.exec(typeAndSpecification)[2]
