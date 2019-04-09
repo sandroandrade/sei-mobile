@@ -14,8 +14,6 @@
         <file>SEITextField.qml</file>
         <file>ProcessDelegate.qml</file>
 
-        <file>networkaccessmanager.js</file>
-
         <file>qtquickcontrols2.conf</file>
 
         <file>images/sei-logo.png</file>

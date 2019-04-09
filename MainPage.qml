@@ -6,8 +6,6 @@ import Qt.labs.settings 1.1
 
 import br.edu.ifba.gsort.webscraping 1.0
 
-import "networkaccessmanager.js" as NAM
-
 Page {
     property string currentUser
     property Settings userSettings

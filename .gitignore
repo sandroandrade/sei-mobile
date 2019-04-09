@@ -45,3 +45,4 @@ CMakeLists.txt.user*
 sei-mobile
 clang-tidy
 tmp
+android-build

@@ -7,7 +7,7 @@
 #include <QXmlQuery>
 #include <QtQml>
 
-#include <buffio.h>
+#include <tidybuffio.h>
 #include <tidy.h>
 
 WebScraper::WebScraper(QObject *parent) //NOLINT(cppcoreguidelines-pro-type-member-init,hicpp-member-init)
