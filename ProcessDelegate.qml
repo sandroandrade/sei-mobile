@@ -10,6 +10,8 @@ Frame {
     property string processSpecification
     property string processAssignment
 
+    clip: true
+
     GridLayout {
         columns: 2
         Label { font.family: FontAwesome.solid; text: Icons.faIdCard; color: "#6c6c6c" }
@@ -19,7 +21,7 @@ Frame {
         Label { id: typeLabel; Layout.fillWidth: true; text: "Tipo: " + processType }
 
         Label { font.family: FontAwesome.solid; text: Icons.faInfoCircle; color: "#6c6c6c" }
-        Label { id: specificationLabel; Layout.fillWidth: true; text: "Especificação: " + processSpecification }
+        Label { id: specificationLabel; Layout.fillWidth: true; elide: Text.ElideRight; text: "Especificação: " + processSpecification }
 
         Label { font.family: FontAwesome.solid; text: Icons.faUserPlus; color: "#6c6c6c" }
         Label { id: assignmentLabel; Layout.fillWidth: true; text: "Atribuído a " + processAssignment }

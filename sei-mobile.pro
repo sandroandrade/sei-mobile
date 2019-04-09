@@ -4,6 +4,9 @@ android: QT += androidextras
 CONFIG += c++17
 LIBS += -ltidy
 
+android: LIBS += -L./
+android: INCLUDEPATH += ./tidy-html5/include/
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -58,3 +61,8 @@ android: HEADERS += \
 
 HEADERS += \
     webscraper.h
+
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_EXTRA_LIBS = \
+        $$PWD/libtidy.so
+}
