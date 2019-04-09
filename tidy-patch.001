@@ -1,0 +1,13 @@
+diff --git a/include/tidy.h b/include/tidy.h
+index b90e00b..663ce62 100644
+--- a/include/tidy.h
++++ b/include/tidy.h
+@@ -1,6 +1,8 @@
+ #ifndef __TIDY_H__
+ #define __TIDY_H__
+ 
++typedef unsigned long ulong;
++
+ /***************************************************************************//**
+  * @file
+  * Defines HTML Tidy public API implemented by LibTidy.

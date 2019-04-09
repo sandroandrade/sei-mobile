@@ -7,3 +7,5 @@ qmake -spec linux-clang ..
 bear make
 
 /usr/share/clang/run-clang-tidy.py -checks=*,-fuchsia-default-arguments ../*.cpp
+
+cd ../ && rm -rf clang-tidy
