@@ -66,7 +66,7 @@ Page {
                                    processesScraper: webScraper
                               })
             }
-            if (webScraper.status === WebScraper.Error)   errorText.text = errorString()
+            if (webScraper.status === WebScraper.Error)   errorText.text = webScraper.errorString()
             if (webScraper.status === WebScraper.Invalid) errorText.text = "acesso negado"
         }
     }
@@ -84,7 +84,6 @@ Page {
     }
 
     Component.onCompleted: {
-        busyIndicator.running = Qt.binding(function() { return webScraper.status === WebScraper.Loading })
         webScraper.statusChanged.connect(onWebScraperStatusChanged)
         if (Qt.platform.os != "android") txtUser.forceActiveFocus()
         if (userSettings.user !== "" && userSettings.password !== "") {
@@ -93,4 +92,6 @@ Page {
             login()
         }
     }
+
+    Component.onDestruction: webScraper.statusChanged.disconnect(onWebScraperStatusChanged)
 }

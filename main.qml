@@ -14,6 +14,13 @@ ApplicationWindow {
     title: qsTr("SEI Mobile")
     visibility: "FullScreen"
 
+    WebScraper {
+        id: webScraper
+        method: WebScraper.POST
+        defaultProtocol: "https"
+        validator: "<title>:: SEI - Controle de Processos ::</title>"
+    }
+
     header: ToolBar {
         Material.foreground: "white"
         contentHeight: toolButton.implicitHeight
@@ -37,7 +44,7 @@ ApplicationWindow {
 
     Drawer {
         id: drawer
-        width: window.width * 0.66
+        width: window.width * ((Screen.desktopAvailableWidth < Screen.desktopAvailableHeight) ? 2/3:1/3)
         height: window.height
 
         ColumnLayout {
@@ -45,6 +52,21 @@ ApplicationWindow {
             ItemDelegate {
                 Layout.fillWidth: true
                 text: "Meus processos"
+                onClicked: {
+                    webScraper.source = serverSettings.serverURL + "/sip/login.php?sigla_orgao_sistema=" + serverSettings.siglaOrgaoSistema + "\&sigla_sistema=" + serverSettings.siglaSistema
+                    webScraper.postData = {
+                        "hdnIdSistema": "100000100",
+                        "hdnMenuSistema": "",
+                        "hdnModuloSistema": "",
+                        "hdnSiglaOrgaoSistema": serverSettings.siglaOrgaoSistema,
+                        "hdnSiglaSistema": serverSettings.siglaSistema,
+                        "pwdSenha": txtPassword.text,
+                        "sbmLogin": "Acessar",
+                        "selOrgao": "0",
+                        "txtUsuario": txtUser.text
+                    }
+                    webScraper.load()
+                }
             }
        }
     }
@@ -53,12 +75,13 @@ ApplicationWindow {
         id: busyIndicator
 
         property alias running: animation.running
-        visible: running
 
+        visible: running
         source: "qrc:///images/sei-logo.png"
         anchors.centerIn: parent
         width: Math.min(Screen.desktopAvailableWidth, Screen.desktopAvailableHeight)/4
         fillMode: Image.PreserveAspectFit
+        running: webScraper.status === WebScraper.Loading
 
         SequentialAnimation on scale {
             id: animation
@@ -75,11 +98,7 @@ ApplicationWindow {
         visible: !busyIndicator.running
         initialItem: ServerConfigPage {
             busyIndicator: busyIndicator
-            webScraper: WebScraper {
-                method: WebScraper.POST
-                defaultProtocol: "https"
-                validator: "<title>:: SEI - Controle de Processos ::</title>"
-            }
+            webScraper: webScraper
         }
     }
 }

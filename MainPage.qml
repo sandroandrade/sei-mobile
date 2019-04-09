@@ -123,8 +123,4 @@ Page {
             configurator.password = ""
         }
     }
-
-    Component.onCompleted: {
-        busyIndicator.running = Qt.binding(function() { return processesScraper.status === WebScraper.Loading })
-    }
 }

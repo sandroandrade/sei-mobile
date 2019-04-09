@@ -64,9 +64,9 @@ Page {
 
             Text {
                 id: errorText
+                anchors { horizontalCenter: parent.horizontalCenter; top: loginButton.bottom; topMargin: columnLayout.spacing }
                 color: "#607D8B"
                 horizontalAlignment: Label.AlignHCenter
-                anchors { horizontalCenter: parent.horizontalCenter; top: loginButton.bottom; topMargin: columnLayout.spacing }
             }
         }
     }
