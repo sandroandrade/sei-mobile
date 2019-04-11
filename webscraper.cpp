@@ -12,11 +12,11 @@
 
 WebScraper::WebScraper(QObject *parent) //NOLINT(cppcoreguidelines-pro-type-member-init,hicpp-member-init)
     : QObject(parent),
+      _status(WebScraper::Null),
       _method(WebScraper::GET),
       _originalMethod(WebScraper::GET),
       _defaultProtocol("http")
 {
-    setStatus(WebScraper::Null);
 }
 
 WebScraper::Status WebScraper::status() const

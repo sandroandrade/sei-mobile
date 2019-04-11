@@ -51,7 +51,7 @@ curl -s -L -X POST 'https://sei.ifba.edu.br/sei/inicializar.php' \
   -b sessionid.jar | xidel - --extract '//*[@id="tblProcessosRecebidos"]/tbody/tr/td[3]/a' | wc -l
 
 # Change mode to MyProcesses (DACOMP.SSA)
-curl -s 'https://sei.ifba.edu.br/sei/controlador.php?acao=procedimento_controlar&acao_origem=procedimento_controlar&infra_sistema=100000100&infra_unidade_atual=110001297&infra_hash=6296a378bf0a6402a138f1e3537e7bffb83265217e1d735762b0c057184eb799' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive' 'Upgrade-Insecure-Requests: 1' --data 'hdnMeusProcessos=M' \
+curl -s 'https://sei.ifba.edu.br/sei/controlador.php?acao=procedimento_controlar&acao_origem=procedimento_controlar&infra_sistema=100000100&infra_unidade_atual=110001297&infra_hash=afeca0c5b546d9b6a6027aeaaf41057ace8cfe92640f8f7ef2038dc65d84bf91' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Content-Type: application/x-www-form-urlencoded' -H 'Connection: keep-alive' 'Upgrade-Insecure-Requests: 1' --data 'hdnMeusProcessos=M' \
  -b sessionid.jar | xidel - --extract '//*[@id="tblProcessosRecebidos"]/tbody/tr/td[3]/a'
  
 # My process at ECDU.SSA
